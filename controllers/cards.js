@@ -31,12 +31,20 @@ module.exports.getCard = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .then((card) => res.send({ data: card }))
+    .then((card) => {
+      if (!card) {
+        throw new Error('Карточка не найдена!');
+      }
+
+      res.send({ data: card });
+    })
     .catch((err) => {
-      if (err) {
+      if (err.name === 'Error') {
         res.status(404).send({ message: 'Карточка не найдена' });
+      } else if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Карточка не найдена' });
       } else {
-        res.status(500).send({ message: 'ошибка по-умолчанию' });
+        res.status(500).send({ message: 'ой, что то пошло не так' });
       }
     });
 };
@@ -45,14 +53,22 @@ module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
-    { new: true },
+    { new: true, runValidators: true },
   )
-    .then((card) => res.send({ data: card }))
+    .then((card) => {
+      if (!card) {
+        throw new Error('Карточка не найдена!');
+      }
+
+      res.send({ data: card });
+    })
     .catch((err) => {
-      if (err) {
+      if (err.name === 'Error') {
         res.status(404).send({ message: 'Карточка не найдена' });
+      } else if (err.name === 'CastError') {
+        res.status(400).send({ message: 'неверно заполнены поля' });
       } else {
-        res.status(500).send({ message: 'ошибка по-умолчанию' });
+        res.status(500).send({ message: 'ой, что то пошло не так' });
       }
     });
 };
@@ -63,12 +79,20 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
   )
-    .then((card) => res.send({ data: card }))
+    .then((card) => {
+      if (!card) {
+        throw new Error('Карточка не найдена!');
+      }
+
+      res.send({ data: card });
+    })
     .catch((err) => {
-      if (err) {
+      if (err.name === 'Error') {
         res.status(404).send({ message: 'Карточка не найдена' });
+      } else if (err.name === 'CastError') {
+        res.status(400).send({ message: 'неверно заполнены поля' });
       } else {
-        res.status(500).send({ message: 'ошибка по-умолчанию' });
+        res.status(500).send({ message: 'ой, что то пошло не так' });
       }
     });
 };
