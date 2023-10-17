@@ -3,6 +3,7 @@ const User = require('../models/user');
 const NOTFOUND = 400;
 const BADREQUEST = 404;
 const INTERNALSERVER = 500;
+const CREATED = 201;
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -46,7 +47,7 @@ module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
-    .then((user) => res.status(201).send({ data: user }))
+    .then((user) => res.status(CREATED).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(NOTFOUND).send({ message: 'неверно заполнены поля' });

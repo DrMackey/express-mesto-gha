@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const { PORT = 3000 } = process.env;
 const app = express();
 
+const BADREQUEST = 404;
+
 app.use(express.json());
 app.use((req, res, next) => {
   req.user = {
@@ -21,7 +23,7 @@ app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
 app.use((req, res, next) => {
-  next(res.status(404).send({ message: 'ой, что то пошло не так' }));
+  next(res.status(BADREQUEST).send({ message: 'ой, что то пошло не так' }));
 });
 
 app.listen(PORT);

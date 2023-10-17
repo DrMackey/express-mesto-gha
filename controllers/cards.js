@@ -3,13 +3,14 @@ const Card = require('../models/card');
 const NOTFOUND = 400;
 const BADREQUEST = 404;
 const INTERNALSERVER = 500;
+const CREATED = 201;
 
 module.exports.createCard = (req, res) => {
   const owner = req.user._id;
   const { name, link } = req.body;
 
   Card.create({ name, link, owner })
-    .then((card) => res.status(201).send({ data: card }))
+    .then((card) => res.status(CREATED).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(NOTFOUND).send({ message: 'неверно заполнены поля' });
