@@ -1,4 +1,4 @@
-const Card = require("../models/card");
+const Card = require('../models/card');
 
 module.exports.createCard = (req, res) => {
   const owner = req.user._id;
@@ -8,9 +8,9 @@ module.exports.createCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err) {
-        res.status(404).send({ message: "Карточка не найдена" });
+        res.status(404).send({ message: 'Карточка не найдена' });
       } else {
-        res.status(500).send({ message: "ошибка по-умолчанию" });
+        res.status(500).send({ message: 'ошибка по-умолчанию' });
       }
     });
 };
@@ -20,9 +20,9 @@ module.exports.getCard = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err) {
-        res.status(404).send({ message: "Карточка не найдена" });
+        res.status(404).send({ message: 'Карточка не найдена' });
       } else {
-        res.status(500).send({ message: "ошибка по-умолчанию" });
+        res.status(500).send({ message: 'ошибка по-умолчанию' });
       }
     });
 };
@@ -32,9 +32,9 @@ module.exports.deleteCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err) {
-        res.status(404).send({ message: "Карточка не найдена" });
+        res.status(404).send({ message: 'Карточка не найдена' });
       } else {
-        res.status(500).send({ message: "ошибка по-умолчанию" });
+        res.status(500).send({ message: 'ошибка по-умолчанию' });
       }
     });
 };
@@ -43,14 +43,14 @@ module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
-    { new: true }
+    { new: true },
   )
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err) {
-        res.status(404).send({ message: "Карточка не найдена" });
+        res.status(404).send({ message: 'Карточка не найдена' });
       } else {
-        res.status(500).send({ message: "ошибка по-умолчанию" });
+        res.status(500).send({ message: 'ошибка по-умолчанию' });
       }
     });
 };
@@ -59,14 +59,14 @@ module.exports.dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
-    { new: true }
+    { new: true },
   )
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err) {
-        res.status(404).send({ message: "Карточка не найдена" });
+        res.status(404).send({ message: 'Карточка не найдена' });
       } else {
-        res.status(500).send({ message: "ошибка по-умолчанию" });
+        res.status(500).send({ message: 'ошибка по-умолчанию' });
       }
     });
 };

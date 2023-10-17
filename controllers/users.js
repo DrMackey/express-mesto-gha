@@ -1,13 +1,13 @@
-const User = require("../models/user");
+const User = require('../models/user');
 
 module.exports.getUser = (req, res) => {
   User.find({})
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === "CastError") {
-        res.status(404).send({ message: "Пользователь не найден" });
+      if (err.name === 'CastError') {
+        res.status(404).send({ message: 'Пользователь не найден' });
       } else {
-        res.status(500).send({ message: "ошибка по-умолчанию" });
+        res.status(500).send({ message: 'ошибка по-умолчанию' });
       }
     });
 };
@@ -16,10 +16,10 @@ module.exports.getUserId = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === "CastError") {
-        res.status(404).send({ message: "Пользователь не найден" });
+      if (err.name === 'CastError') {
+        res.status(404).send({ message: 'Пользователь не найден' });
       } else {
-        res.status(500).send({ message: "ошибка по-умолчанию" });
+        res.status(500).send({ message: 'ошибка по-умолчанию' });
       }
     });
 };
@@ -30,10 +30,10 @@ module.exports.createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === "CastError") {
-        res.status(404).send({ message: "Пользователь не найден" });
+      if (err.name === 'CastError') {
+        res.status(404).send({ message: 'Пользователь не найден' });
       } else {
-        res.status(500).send({ message: "ошибка по-умолчанию" });
+        res.status(500).send({ message: 'ошибка по-умолчанию' });
       }
     });
 };
@@ -44,12 +44,12 @@ module.exports.patchMe = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { name, about })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === "CastError") {
+      if (err.name === 'CastError') {
         res.status(400).send({
-          message: "Переданы некорректные данные при обновлении профиля",
+          message: 'Переданы некорректные данные при обновлении профиля',
         });
       } else {
-        res.status(500).send({ message: "ошибка по-умолчанию" });
+        res.status(500).send({ message: 'ошибка по-умолчанию' });
       }
     });
 };
@@ -60,10 +60,10 @@ module.exports.patchAvatar = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { avatar })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === "CastError") {
-        res.status(404).send({ message: "Пользователь не найден" });
+      if (err.name === 'CastError') {
+        res.status(404).send({ message: 'Пользователь не найден' });
       } else {
-        res.status(500).send({ message: "ошибка по-умолчанию" });
+        res.status(500).send({ message: 'ошибка по-умолчанию' });
       }
     });
 };
