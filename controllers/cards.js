@@ -1,30 +1,38 @@
 const Card = require('../models/card');
 
+const NOTFOUND = 400;
+const BADREQUEST = 404;
+const INTERNALSERVER = 500;
+
 module.exports.createCard = (req, res) => {
   const owner = req.user._id;
   const { name, link } = req.body;
 
   Card.create({ name, link, owner })
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.status(201).send({ data: card }))
     .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(404).send({ message: 'Карточка не найдена' });
-      } else if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'неверно заполнены поля' });
+      if (err.name === 'ValidationError') {
+        res.status(NOTFOUND).send({ message: 'неверно заполнены поля' });
       } else {
-        res.status(500).send({ message: 'ой, что то пошло не так' });
+        res.status(INTERNALSERVER).send({ message: 'ой, что то пошло не так' });
       }
     });
 };
 
 module.exports.getCard = (req, res) => {
   Card.find({})
-    .then((user) => res.send({ data: user }))
+    .then((cards) => {
+      if (cards.length <= 0) {
+        throw new Error('Карточки не найдены!');
+      }
+
+      res.send({ data: cards });
+    })
     .catch((err) => {
-      if (err) {
-        res.status(404).send({ message: 'Карточка не найдена' });
+      if (err.name === 'Error') {
+        res.status(BADREQUEST).send({ message: 'Карточки не найдены' });
       } else {
-        res.status(500).send({ message: 'ошибка по-умолчанию' });
+        res.status(INTERNALSERVER).send({ message: 'ой, что то пошло не так' });
       }
     });
 };
@@ -40,11 +48,11 @@ module.exports.deleteCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'Error') {
-        res.status(404).send({ message: 'Карточка не найдена' });
+        res.status(BADREQUEST).send({ message: 'Карточка не найдена' });
       } else if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Карточка не найдена' });
+        res.status(NOTFOUND).send({ message: 'Карточка не найдена' });
       } else {
-        res.status(500).send({ message: 'ой, что то пошло не так' });
+        res.status(INTERNALSERVER).send({ message: 'ой, что то пошло не так' });
       }
     });
 };
@@ -53,7 +61,7 @@ module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
-    { new: true, runValidators: true },
+    { new: true },
   )
     .then((card) => {
       if (!card) {
@@ -64,11 +72,11 @@ module.exports.likeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'Error') {
-        res.status(404).send({ message: 'Карточка не найдена' });
+        res.status(BADREQUEST).send({ message: 'Карточка не найдена' });
       } else if (err.name === 'CastError') {
-        res.status(400).send({ message: 'неверно заполнены поля' });
+        res.status(NOTFOUND).send({ message: 'неверно заполнены поля' });
       } else {
-        res.status(500).send({ message: 'ой, что то пошло не так' });
+        res.status(INTERNALSERVER).send({ message: 'ой, что то пошло не так' });
       }
     });
 };
@@ -88,11 +96,11 @@ module.exports.dislikeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'Error') {
-        res.status(404).send({ message: 'Карточка не найдена' });
+        res.status(BADREQUEST).send({ message: 'Карточка не найдена' });
       } else if (err.name === 'CastError') {
-        res.status(400).send({ message: 'неверно заполнены поля' });
+        res.status(NOTFOUND).send({ message: 'неверно заполнены поля' });
       } else {
-        res.status(500).send({ message: 'ой, что то пошло не так' });
+        res.status(INTERNALSERVER).send({ message: 'ой, что то пошло не так' });
       }
     });
 };
