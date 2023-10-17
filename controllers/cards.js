@@ -7,10 +7,12 @@ module.exports.createCard = (req, res) => {
   Card.create({ name, link, owner })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err) {
+      if (err.name === 'CastError') {
         res.status(404).send({ message: 'Карточка не найдена' });
+      } else if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'неверно заполнены поля' });
       } else {
-        res.status(500).send({ message: 'ошибка по-умолчанию' });
+        res.status(500).send({ message: 'ой, что то пошло не так' });
       }
     });
 };
