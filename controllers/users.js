@@ -22,8 +22,10 @@ module.exports.getUserId = (req, res) => {
       res.send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Пользователь не найден' });
+      if (err.name === 'Error') {
+        res.status(404).send({ message: 'Пользователь не найден' });
+      } else if (err.name === 'CastError') {
+        res.status(400).send({ message: 'неверно заполнены поля' });
       } else {
         res.status(500).send({ message: 'ой, что то пошло не так' });
       }
