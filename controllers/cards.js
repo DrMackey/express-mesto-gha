@@ -21,20 +21,8 @@ module.exports.createCard = (req, res) => {
 
 module.exports.getCard = (req, res) => {
   Card.find({})
-    .then((cards) => {
-      if (cards.length <= 0) {
-        throw new Error('Карточки не найдены!');
-      }
-
-      res.send({ data: cards });
-    })
-    .catch((err) => {
-      if (err.name === 'Error') {
-        res.status(BADREQUEST).send({ message: 'Карточки не найдены' });
-      } else {
-        res.status(INTERNALSERVER).send({ message: 'ой, что то пошло не так' });
-      }
-    });
+    .then((cards) => res.send({ data: cards }))
+    .catch(() => res.status(INTERNALSERVER).send({ message: 'ой, что то пошло не так' }));
 };
 
 module.exports.deleteCard = (req, res) => {
