@@ -14,7 +14,7 @@
     "url": "git+https://github.com/DrMackey/express-mesto-gha.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "DrMackey",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/DrMackey/express-mesto-gha/issues"
