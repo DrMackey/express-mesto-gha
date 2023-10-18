@@ -1,25 +1,17 @@
 const User = require('../models/user');
 
-const NOTFOUND = 400;
-const BADREQUEST = 404;
+const BADREQUEST = 400;
+const NOTFOUND = 404;
 const INTERNALSERVER = 500;
 const CREATED = 201;
 
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => {
-      if (users.length <= 0) {
-        throw new Error('Пользователи не найдены!');
-      }
-
       res.send({ data: users });
     })
-    .catch((err) => {
-      if (err.name === 'Error') {
-        res.status(BADREQUEST).send({ message: 'Пользователи не найдены' });
-      } else {
-        res.status(INTERNALSERVER).send({ message: 'ой, что то пошло не так' });
-      }
+    .catch(() => {
+      res.status(INTERNALSERVER).send({ message: 'ой, что то пошло не так' });
     });
 };
 
@@ -34,9 +26,9 @@ module.exports.getUserId = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'Error') {
-        res.status(BADREQUEST).send({ message: 'Пользователь не найден' });
+        res.status(NOTFOUND).send({ message: 'Пользователь не найден' });
       } else if (err.name === 'CastError') {
-        res.status(NOTFOUND).send({ message: 'неверно заполнены поля' });
+        res.status(BADREQUEST).send({ message: 'неверно заполнены поля' });
       } else {
         res.status(INTERNALSERVER).send({ message: 'ой, что то пошло не так' });
       }
@@ -50,7 +42,7 @@ module.exports.createUser = (req, res) => {
     .then((user) => res.status(CREATED).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(NOTFOUND).send({ message: 'неверно заполнены поля' });
+        res.status(BADREQUEST).send({ message: 'неверно заполнены поля' });
       } else {
         res.status(INTERNALSERVER).send({ message: 'ой, что то пошло не так' });
       }
@@ -70,7 +62,7 @@ module.exports.patchMe = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(NOTFOUND).send({ message: 'неверно заполнены поля' });
+        res.status(BADREQUEST).send({ message: 'неверно заполнены поля' });
       } else {
         res.status(INTERNALSERVER).send({ message: 'ой, что то пошло не так' });
       }
@@ -88,9 +80,9 @@ module.exports.patchAvatar = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(NOTFOUND).send({ message: 'неверно заполнены поля' });
+        res.status(BADREQUEST).send({ message: 'неверно заполнены поля' });
       } else {
-        res.status(500).send({ message: 'ошибка по-умолчанию' });
+        res.status(INTERNALSERVER).send({ message: 'ошибка по-умолчанию' });
       }
     });
 };

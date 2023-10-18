@@ -1,7 +1,7 @@
 const Card = require('../models/card');
 
-const NOTFOUND = 400;
-const BADREQUEST = 404;
+const BADREQUEST = 400;
+const NOTFOUND = 404;
 const INTERNALSERVER = 500;
 const CREATED = 201;
 
@@ -13,14 +13,14 @@ module.exports.createCard = (req, res) => {
     .then((card) => res.status(CREATED).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(NOTFOUND).send({ message: 'неверно заполнены поля' });
+        res.status(BADREQUEST).send({ message: 'неверно заполнены поля' });
       } else {
         res.status(INTERNALSERVER).send({ message: 'ой, что то пошло не так' });
       }
     });
 };
 
-module.exports.getCard = (req, res) => {
+module.exports.getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
     .catch(() => res.status(INTERNALSERVER).send({ message: 'ой, что то пошло не так' }));
@@ -37,9 +37,9 @@ module.exports.deleteCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'Error') {
-        res.status(BADREQUEST).send({ message: 'Карточка не найдена' });
-      } else if (err.name === 'CastError') {
         res.status(NOTFOUND).send({ message: 'Карточка не найдена' });
+      } else if (err.name === 'CastError') {
+        res.status(BADREQUEST).send({ message: 'Карточка не найдена' });
       } else {
         res.status(INTERNALSERVER).send({ message: 'ой, что то пошло не так' });
       }
@@ -61,9 +61,9 @@ module.exports.likeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'Error') {
-        res.status(BADREQUEST).send({ message: 'Карточка не найдена' });
+        res.status(NOTFOUND).send({ message: 'Карточка не найдена' });
       } else if (err.name === 'CastError') {
-        res.status(NOTFOUND).send({ message: 'неверно заполнены поля' });
+        res.status(BADREQUEST).send({ message: 'неверно заполнены поля' });
       } else {
         res.status(INTERNALSERVER).send({ message: 'ой, что то пошло не так' });
       }
@@ -85,9 +85,9 @@ module.exports.dislikeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'Error') {
-        res.status(BADREQUEST).send({ message: 'Карточка не найдена' });
+        res.status(NOTFOUND).send({ message: 'Карточка не найдена' });
       } else if (err.name === 'CastError') {
-        res.status(NOTFOUND).send({ message: 'неверно заполнены поля' });
+        res.status(BADREQUEST).send({ message: 'неверно заполнены поля' });
       } else {
         res.status(INTERNALSERVER).send({ message: 'ой, что то пошло не так' });
       }
