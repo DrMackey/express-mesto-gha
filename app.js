@@ -5,6 +5,7 @@ const { errors } = require('celebrate');
 const auth = require('./middlewares/auth');
 const { validateCreateUser, validateLogin } = require('./middlewares/validate');
 const { createUser, login } = require('./controllers/users');
+const NotFound = require('./errors/notfound');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -35,9 +36,9 @@ app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
 app.use(errors());
-// app.use((req, res, next) => {
-//   next(res.status(BADREQUEST).send({ message: 'ой, что то пошло не так' }));
-// });
+app.use((req, res, next) => {
+  next(new NotFound('Страница не найдена'));
+});
 
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {

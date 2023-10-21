@@ -5,7 +5,7 @@ const User = require('../models/user');
 const BadRequest = require('../errors/badrequest');
 const NotFound = require('../errors/notfound');
 const Conflict = require('../errors/conflict');
-// const Unauthorized = require('../errors/unauthorized');
+const Unauthorized = require('../errors/unauthorized');
 
 // const BADREQUEST = 400;
 // const NOTFOUND = 404;
@@ -32,7 +32,7 @@ module.exports.getUsers = (req, res, next) => {
 };
 
 module.exports.getUser = (req, res, next) => {
-  User.findById(req.user._id)
+  User.findById(req.user.payload)
     .then((users) => {
       res.send({ data: users });
     })
@@ -86,7 +86,6 @@ module.exports.createUser = (req, res, next) => {
           about: user.about,
           avatar: user.avatar,
           email: user.email,
-          password,
         }))
         .catch((err) => {
           if (err.name === 'ValidationError') {
@@ -107,7 +106,7 @@ module.exports.patchMe = (req, res, next) => {
   const { name, about } = req.body;
 
   User.findByIdAndUpdate(
-    req.user._id,
+    req.user.payload,
     { name, about },
     { new: true, runValidators: true },
   )
@@ -129,7 +128,7 @@ module.exports.patchAvatar = (req, res, next) => {
   const { avatar } = req.body;
 
   User.findByIdAndUpdate(
-    req.user._id,
+    req.user.payload,
     { avatar },
     { new: true, runValidators: true },
   )
@@ -153,7 +152,7 @@ module.exports.login = (req, res, next) => {
     .then((user) => {
       if (!user) {
         // return Promise.reject(new Error('Неправильные почта или пароль'));
-        next(new BadRequest('Неправильные почта или пароль'));
+        next(new Unauthorized('Неправильные почта или пароль'));
       }
       token = getJwtToken(user._id);
       return bcrypt.compare(password, user.password);

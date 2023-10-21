@@ -1,7 +1,9 @@
+/* eslint-disable eqeqeq */
 const Card = require('../models/card');
 const BadRequest = require('../errors/badrequest');
 const NotFound = require('../errors/notfound');
-const Unauthorized = require('../errors/unauthorized');
+// const Unauthorized = require('../errors/unauthorized');
+const Forbidden = require('../errors/forbidden');
 // const InternalServer = require('../errors/internalserver');
 
 // const BADREQUEST = 400;
@@ -41,12 +43,12 @@ module.exports.deleteCard = (req, res, next) => {
         next(new NotFound('Карточка не найдена!'));
         // throw new Error('Карточка не найдена!');
       }
-      if (owner === card.owner) {
+      if (owner == card.owner) {
         res.send({ data: card });
         card.deleteOne();
       } else {
         // return Promise.reject(new Error('Отказано в доступе'));
-        next(new Unauthorized('Отказано в доступе'));
+        next(new Forbidden('Отказано в доступе'));
       }
     })
     .catch((err) => {
@@ -66,7 +68,7 @@ module.exports.deleteCard = (req, res, next) => {
 module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
+    { $addToSet: { likes: req.user.payload } }, // добавить _id в массив, если его там нет
     { new: true },
   )
     .then((card) => {
@@ -94,7 +96,7 @@ module.exports.likeCard = (req, res, next) => {
 module.exports.dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $pull: { likes: req.user._id } },
+    { $pull: { likes: req.user.payload } },
     { new: true },
   )
     .then((card) => {
