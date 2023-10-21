@@ -73,25 +73,34 @@ module.exports.createUser = (req, res, next) => {
 
   bcrypt
     .hash(password, 10)
-    .then((hash) => User.create({
-      name,
-      about,
-      avatar,
-      email,
-      password: hash,
-    }))
-    .then((user) => res.status(CREATED).send({ data: user }))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        // res.status(BADREQUEST).send({ message: 'неверно заполнены поля' });
-        next(new BadRequest('неверно заполнены поля'));
-      } else if (err.code === 11000) {
-        next(new Conflict('неверно заполнены поля'));
-      } else {
-        // res.status(INTERNALSERVER).send({ message: 'ой, что то пошло не так' });
-        next(err);
-      }
-    });
+    .then((hash) => {
+      User.create({
+        name,
+        about,
+        avatar,
+        email,
+        password: hash,
+      })
+        .then((user) => res.status(CREATED).send({
+          name: user.name,
+          about: user.about,
+          avatar: user.avatar,
+          email: user.email,
+          password,
+        }))
+        .catch((err) => {
+          if (err.name === 'ValidationError') {
+            // res.status(BADREQUEST).send({ message: 'неверно заполнены поля' });
+            next(new BadRequest('неверно заполнены поля'));
+          } else if (err.code === 11000) {
+            next(new Conflict('неверно заполнены поля'));
+          } else {
+            // res.status(INTERNALSERVER).send({ message: 'ой, что то пошло не так' });
+            next(err);
+          }
+        });
+    })
+    .catch((err) => next(err));
 };
 
 module.exports.patchMe = (req, res, next) => {

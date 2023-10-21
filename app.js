@@ -9,7 +9,7 @@ const { createUser, login } = require('./controllers/users');
 const { PORT = 3000 } = process.env;
 const app = express();
 
-const BADREQUEST = 404;
+// const BADREQUEST = 404;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -35,11 +35,12 @@ app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
 app.use(errors());
-app.use((req, res, next) => {
-  next(res.status(BADREQUEST).send({ message: 'ой, что то пошло не так' }));
-});
+// app.use((req, res, next) => {
+//   next(res.status(BADREQUEST).send({ message: 'ой, что то пошло не так' }));
+// });
 
-app.use((err, req, res) => {
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
 
   res
