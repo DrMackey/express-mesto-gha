@@ -12,7 +12,7 @@ const {
 } = require('../middlewares/validate');
 
 router.get('/', getCards);
-router.delete('/:cardId', deleteCard);
+router.delete('/:cardId', validateCardLike, deleteCard);
 router.post('/', validateCreateCard, createCard);
 router.put('/:cardId/likes', validateCardLike, likeCard);
 router.delete('/:cardId/likes', validateCardLike, dislikeCard);
