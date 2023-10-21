@@ -7,9 +7,6 @@ const NotFound = require('../errors/notfound');
 const Conflict = require('../errors/conflict');
 const Unauthorized = require('../errors/unauthorized');
 
-// const BADREQUEST = 400;
-// const NOTFOUND = 404;
-// const INTERNALSERVER = 500;
 const CREATED = 201;
 const JWT_SECRET = 'token';
 
@@ -26,7 +23,6 @@ module.exports.getUsers = (req, res, next) => {
       res.send({ data: users });
     })
     .catch((err) => {
-      // res.status(INTERNALSERVER).send({ message: 'ой, что то пошло не так' });
       next(err);
     });
 };
@@ -37,7 +33,6 @@ module.exports.getUser = (req, res, next) => {
       res.send({ data: users });
     })
     .catch((err) => {
-      // res.status(INTERNALSERVER).send({ message: 'ой, что то пошло не так' });
       next(err);
     });
 };
@@ -46,7 +41,6 @@ module.exports.getUserId = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        // throw new Error('Пользователь не найден!');
         next(new NotFound('Пользователь не найден!'));
       }
 
@@ -54,12 +48,10 @@ module.exports.getUserId = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'Error') {
-        // res.status(NOTFOUND).send({ message: 'Пользователь не найден' });
         next(new NotFound('Пользователь не найден!'));
       } else if (err.name === 'CastError') {
         next(new BadRequest('неверно заполнены поля'));
       } else {
-        // res.status(INTERNALSERVER).send({ message: 'ой, что то пошло не так' });
         next(err);
       }
     });
@@ -88,12 +80,10 @@ module.exports.createUser = (req, res, next) => {
         }))
         .catch((err) => {
           if (err.name === 'ValidationError') {
-            // res.status(BADREQUEST).send({ message: 'неверно заполнены поля' });
             next(new BadRequest('неверно заполнены поля'));
           } else if (err.code === 11000) {
             next(new Conflict('неверно заполнены поля'));
           } else {
-            // res.status(INTERNALSERVER).send({ message: 'ой, что то пошло не так' });
             next(err);
           }
         });
@@ -114,10 +104,8 @@ module.exports.patchMe = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        // res.status(BADREQUEST).send({ message: 'неверно заполнены поля' });
         next(new NotFound('Карточка не найдена!'));
       } else {
-        // res.status(INTERNALSERVER).send({ message: 'ой, что то пошло не так' });
         next(err);
       }
     });
@@ -134,10 +122,8 @@ module.exports.patchAvatar = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        // res.status(BADREQUEST).send({ message: 'неверно заполнены поля' });
         next(new BadRequest('неверно заполнены поля'));
       } else {
-        // res.status(INTERNALSERVER).send({ message: 'ошибка по-умолчанию' });
         next(err);
       }
     });
@@ -150,7 +136,6 @@ module.exports.login = (req, res, next) => {
     .select('+password')
     .then((user) => {
       if (!user) {
-        // return Promise.reject(new Error('Неправильные почта или пароль'));
         next(new Unauthorized('Неправильные почта или пароль'));
       }
       token = getJwtToken(user._id);
@@ -158,7 +143,6 @@ module.exports.login = (req, res, next) => {
     })
     .then((matched) => {
       if (!matched) {
-        // return Promise.reject(new Error('Неправильные почта или пароль'));
         next(new BadRequest('Неправильные почта или пароль'));
       }
 
@@ -170,7 +154,6 @@ module.exports.login = (req, res, next) => {
         .send({ message: 'Успешная авторизация.' });
     })
     .catch((err) => {
-      // res.status(401).send({ message: err.message });
       next(err);
     });
 };
