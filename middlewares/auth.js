@@ -1,18 +1,16 @@
 const jwt = require('jsonwebtoken');
 
+const InternalServer = require('../errors/internalserver');
+const Unauthorized = require('../errors/unauthorized');
+
 const JWT_SECRET = 'token';
-
-const UNAUTHORIZED = 401;
-
-function PromiseError() {
-  return Promise.reject(new Error('Ошибка. Что-то пошло не так...'));
-}
 
 module.exports = (req, res, next) => {
   const token = req.cookies.jwt;
 
   if (!token) {
-    PromiseError();
+    next(new InternalServer('ой, что то пошло не так...'));
+    return;
   }
 
   let payload;
@@ -20,7 +18,8 @@ module.exports = (req, res, next) => {
   try {
     payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
-    res.status(UNAUTHORIZED).send({ message: 'Необходима авторизация' });
+    next(new Unauthorized('Необходима авторизация'));
+    return;
   }
 
   req.user = payload;

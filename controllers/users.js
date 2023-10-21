@@ -1,3 +1,6 @@
+/* eslint-disable no-useless-return */
+/* eslint-disable no-else-return */
+/* eslint-disable consistent-return */
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
@@ -42,17 +45,18 @@ module.exports.getUserId = (req, res, next) => {
     .then((user) => {
       if (!user) {
         next(new NotFound('Пользователь не найден!'));
+        return;
       }
 
       res.send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'Error') {
-        next(new NotFound('Пользователь не найден!'));
-      } else if (err.name === 'CastError') {
+      if (err.name === 'CastError') {
         next(new BadRequest('неверно заполнены поля'));
+        return;
       } else {
         next(err);
+        return;
       }
     });
 };
@@ -80,11 +84,14 @@ module.exports.createUser = (req, res, next) => {
         }))
         .catch((err) => {
           if (err.name === 'ValidationError') {
-            next(new BadRequest('неверно заполнены поля'));
+            next(new BadRequest('Неверно заполнены поля'));
+            return;
           } else if (err.code === 11000) {
-            next(new Conflict('неверно заполнены поля'));
+            next(new Conflict('Пользователь уже зарегистрирован'));
+            return;
           } else {
             next(err);
+            return;
           }
         });
     })
@@ -104,9 +111,11 @@ module.exports.patchMe = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new NotFound('Карточка не найдена!'));
+        next(new NotFound('Неверно заполнены поля'));
+        return;
       } else {
         next(err);
+        return;
       }
     });
 };
@@ -123,8 +132,10 @@ module.exports.patchAvatar = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequest('неверно заполнены поля'));
+        return;
       } else {
         next(err);
+        return;
       }
     });
 };
@@ -137,13 +148,15 @@ module.exports.login = (req, res, next) => {
     .then((user) => {
       if (!user) {
         next(new Unauthorized('Неправильные почта или пароль'));
+        return;
       }
       token = getJwtToken(user._id);
       return bcrypt.compare(password, user.password);
     })
     .then((matched) => {
       if (!matched) {
-        next(new BadRequest('Неправильные почта или пароль'));
+        next(new Unauthorized('Неправильные почта или пароль'));
+        return;
       }
 
       return res

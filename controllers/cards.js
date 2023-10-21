@@ -1,3 +1,5 @@
+/* eslint-disable no-else-return */
+/* eslint-disable no-useless-return */
 /* eslint-disable eqeqeq */
 const Card = require('../models/card');
 const BadRequest = require('../errors/badrequest');
@@ -15,8 +17,10 @@ module.exports.createCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequest('неверно заполнены поля'));
+        return;
       } else {
         next(err);
+        return;
       }
     });
 };
@@ -34,21 +38,30 @@ module.exports.deleteCard = (req, res, next) => {
     .then((card) => {
       if (!card) {
         next(new NotFound('Карточка не найдена!'));
+        return;
       }
       if (owner == card.owner) {
-        res.send({ data: card });
-        card.deleteOne();
+        card
+          .deleteOne()
+          .then(() => {
+            res.send({ data: card });
+          })
+          .catch((err) => {
+            next(err);
+          });
+        return;
       } else {
         next(new Forbidden('Отказано в доступе'));
+        return;
       }
     })
     .catch((err) => {
-      if (err.name === 'Error') {
-        next(new NotFound(err.message));
-      } else if (err.name === 'CastError') {
-        next(new BadRequest('Карточка не найдена'));
+      if (err.name === 'CastError') {
+        next(new BadRequest('неверный id'));
+        return;
       } else {
         next(err);
+        return;
       }
     });
 };
@@ -63,17 +76,18 @@ module.exports.likeCard = (req, res, next) => {
     .then((card) => {
       if (!card) {
         next(new NotFound('Карточка не найдена!'));
+        return;
       }
 
       res.send({ data: card });
     })
     .catch((err) => {
-      if (err.name === 'Error') {
-        next(new NotFound('Карточка не найдена'));
-      } else if (err.name === 'CastError') {
+      if (err.name === 'CastError') {
         next(new BadRequest('неверно заполнены поля'));
+        return;
       } else {
         next(err);
+        return;
       }
     });
 };
@@ -93,12 +107,12 @@ module.exports.dislikeCard = (req, res, next) => {
       res.send({ data: card });
     })
     .catch((err) => {
-      if (err.name === 'Error') {
-        next(new NotFound('Карточка не найдена'));
-      } else if (err.name === 'CastError') {
+      if (err.name === 'CastError') {
         next(new BadRequest('неверно заполнены поля'));
+        return;
       } else {
         next(err);
+        return;
       }
     });
 };
