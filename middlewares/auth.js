@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken');
 
-const InternalServer = require('../errors/internalserver');
 const Unauthorized = require('../errors/unauthorized');
 
 const JWT_SECRET = 'token';
@@ -9,7 +8,7 @@ module.exports = (req, res, next) => {
   const token = req.cookies.jwt;
 
   if (!token) {
-    next(new InternalServer('ой, что то пошло не так...'));
+    next(new Unauthorized('Необходима авторизация'));
     return;
   }
 
