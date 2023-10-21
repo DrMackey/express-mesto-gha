@@ -57,7 +57,6 @@ module.exports.getUserId = (req, res, next) => {
         // res.status(NOTFOUND).send({ message: 'Пользователь не найден' });
         next(new NotFound('Пользователь не найден!'));
       } else if (err.name === 'CastError') {
-        // res.status(BADREQUEST).send({ message: 'неверно заполнены поля' });
         next(new BadRequest('неверно заполнены поля'));
       } else {
         // res.status(INTERNALSERVER).send({ message: 'ой, что то пошло не так' });

@@ -47,6 +47,7 @@ app.use((err, req, res, next) => {
   res
     .status(statusCode)
     .send({ message: statusCode === 500 ? 'Что то пошло не так' : message });
+  // .send(err);
 });
 
 app.listen(PORT);

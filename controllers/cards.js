@@ -71,6 +71,7 @@ module.exports.likeCard = (req, res, next) => {
     { $addToSet: { likes: req.user.payload } }, // добавить _id в массив, если его там нет
     { new: true },
   )
+
     .then((card) => {
       if (!card) {
         next(new NotFound('Карточка не найдена!'));
@@ -99,10 +100,10 @@ module.exports.dislikeCard = (req, res, next) => {
     { $pull: { likes: req.user.payload } },
     { new: true },
   )
+    // eslint-disable-next-line consistent-return
     .then((card) => {
-      if (!card) {
-        // throw new Error('Карточка не найдена!');
-        next(new NotFound('Карточка не найдена'));
+      if (card === null) {
+        return next(new NotFound('Карточка не найдена'));
       }
 
       res.send({ data: card });
