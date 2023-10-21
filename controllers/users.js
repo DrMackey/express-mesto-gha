@@ -16,7 +16,7 @@ const JWT_SECRET = 'token';
 let token = '';
 
 function getJwtToken(id) {
-  const token = jwt.sign({ payload: id }, JWT_SECRET, { expiresIn: '7d' });
+  token = jwt.sign({ payload: id }, JWT_SECRET, { expiresIn: '7d' });
   return token;
 }
 
@@ -74,7 +74,11 @@ module.exports.createUser = (req, res, next) => {
   bcrypt
     .hash(password, 10)
     .then((hash) => User.create({
-      name, about, avatar, email, password: hash,
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
     }))
     .then((user) => res.status(CREATED).send({ data: user }))
     .catch((err) => {

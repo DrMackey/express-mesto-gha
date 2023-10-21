@@ -41,7 +41,7 @@ module.exports.deleteCard = (req, res, next) => {
         next(new NotFound('Карточка не найдена!'));
         // throw new Error('Карточка не найдена!');
       }
-      if (owner == card.owner) {
+      if (owner === card.owner) {
         res.send({ data: card });
         card.deleteOne();
       } else {
